@@ -112,12 +112,12 @@
 		
 		var connection = new WebSocket('ws://'+window.location.host);
 		var anim_time;
-		var call_count;
+		// var call_count;
 
 		connection.onmessage = function( message ){
 			msgObj = JSON.parse(message.data)
-			switch (msgObj.message) {
-				
+			switch (msgObj.message) 
+			{
 				// To set the focus on our area of interest.
 				case "set_map_view":
 					var southWest_lat = msgObj.map_southwest_lat;
@@ -134,7 +134,7 @@
 
 				// Initialize the animation with clock time = 0
 				case "set_start_time":
-					anim_time = 0
+					updateSimTime(0.00)
 					break;
 	
 				// Set up the icons and link them with the JSON object.
@@ -142,10 +142,10 @@
 					delete msgObj.message
 					setIcons(msgObj)
 					break;
-					
+		
 				// Show the static ranks on the map, with the initial condition.	
 				case "add_ranks":
-					addRank(msgObj.Init_taxi, msgObj.rank_name, msgObj.rank_long, msgObj.rank_lat)
+					addRank(msgOjb.rank_id, msgObj.rank_name, msgObj.rank_long, msgObj.rank_lat, msgObj.rank_taxi, msgObj.rank_first_taxi, msgObj.rank_first_soc)
 					break;
 
 				// Show the static taxi object on the map. They are initially at the ranks themselves.	
@@ -155,29 +155,35 @@
 
 				// Notification from Julia to mention that the set-up is now completed.
 				case "set_up_complete":
-					
+					if (state == "running"){
+						connection.send("start_the_simulation")
+					}else{
+						console.log("Press_the_run_button!!!!!!")
+						connection.send("wait_for_start")
+					}
 					break;	
 
 				// Synchronize the Javascript clock with the Julia clock
 				case "Current_time":
+					updateSimTime(msgObj.time)
 					break;
                 
 				// Show the calls of currently active trips.
-				case "update_call":
-					var c = msgObj.call
-					addCall(c.index, c.currentLoc.y, c.currentLoc.x, c.priority)
+				case "update_calls":
+					
+					if (state == "running"){	
+						connection.send("prepare_next_frame");
+					}
 					break;
 
 				// Update the Rank dynamics	
 				case "update_ranks":
-					var c = msgObj.call
-					moveCall(c.index, c.currentLoc.y, c.currentLoc.x)
+					
 					break;
 
 				// Update the taxi locations and draw lines for their trips.	
 				case "update_taxis":
-					var c = msgObj.call
-					removeCall(c.index)
+					
 					break;
 				
 				// Notification call for the Javascript client to disconnect from Julia server.
@@ -204,23 +210,32 @@
 		}
 		
 		////////////////////////////////////////////////////////////////
-		
 		// buttons etc.
-		
-		var state = "stopped" // can be: running, paused, stopped, jumping
-		$('#run_pause_button').on('click', function(){
-			if (this.value == "Run") {
-				if (state == "paused" || state == "stopped") {
-					runAnimation()
-				}
-			} else if (this.value == "Pause") {
-				if (state == "running") {
-					pauseAnimation()
-				}
+		var simSpeed;
+		$("#sim_speed").bind('blur keyup',function(e) {
+			if (e.type == 'blur' || e.keyCode == '13') {
+				simSpeed = parseFloat($('#sim_speed').val());
+				$('#sim_speed').val(simSpeed);
+				connection.send("Animation_Speed" + simSpeed);
 			}
 		})
+
+		var state = "stopped"; 					// can be: running, paused, stopped
+		$('#run_pause_button').on('click', function(){
+			if (this.value == "Run" && state == "paused") {
+				state = "running";
+				document.getElementById("run_pause_button").value = "Pause";
+				connection.send("prepare_next_frame");
+			} else if (this.value == "Pause" && state == "running") {
+				state = "paused";
+				document.getElementById("run_pause_button").value = "Run";
+				connection.send("pause");
+			}
+		})
+
 		$('#stop_button').on('click', function(){
 			if (state == "running" || state == "paused") {
+				state = "stopped"
 				stopAnimation();
 			}
 		})
@@ -230,42 +245,24 @@
 		////////////////////////////////////////////////////////////////
 		// sim/animation states
 		
-		doLogState = false
-		function logState() {
-			if (doLogState) {
-				console.log(state);
-			}
-		}
-		
-		function runAnimation() {
-			state = "running"
-			logState()
-			lastFrameTime = getCurrentTime()
-			prepareNextFrame()
-			document.getElementById("run_pause_button").value = "Pause";
-		}
-		
-		function pauseAnimation() {
-			state = "paused"
-			logState()
-			connection.send("pause");
-			document.getElementById("run_pause_button").value = "Run";
-		}
-		
 		function stopAnimation() {
 			state = "stopped"
-			logState()
-			removeAmbs();
-			removeCalls();
-			updateSimTime(simStartTime);
+			removeAll();
 			connection.send("stop");
 			document.getElementById("run_pause_button").value = "Run";
 		}
 		
 		////////////////////////////////////////////////////////////////
+		// Sim Time
+		function updateSimTime(time) {
+			$("#sim_time").text(time);
+		}
+
+
+		////////////////////////////////////////////////////////////////
 		// 	Icons
 		
-		var icons = {};				// This line creates a dictionary for storing all the icon's data.
+		var icons = {};				// This line creates a dictionary for storing different types of icon object.
 		
 		function setIcons(iconsObj) {
 			for (iconName in iconsObj)
@@ -327,6 +324,43 @@
 			}
 		}
 		
+		////////////////////////////////////////////////////////////////
+		// Ranks
+		
+		var ranks = {}
+		var taxi_ranks = {}
+					
+		function addRank(id, name, lon, lat, taxi_no, first_taxi_id, first_taxi_soc) 
+		{
+			if (taxi_no == 0){
+				if (id in ranks) {
+					throw new Error("Cannot add Ranks with name " + ranks[id].name + " as it exists already")
+				}
+				ranks[id] = new ranks(id, name, lat, lon);
+			
+			}else if (taxi_no > 0){
+				if (id in taxi_ranks) {
+					throw new Error("Cannot add Ranks with name " + ranks[id].name + " as it exists already")
+				}
+				taxi_ranks[id] = new ranksTaxi(id, name, lat, lon, taxi_no, first_taxi_id, first_taxi_soc);
+			}
+		}
+		
+		function ranks(id, name, lat, lon) {
+			this.id = id;
+			this.name = name;
+			this.marker = markerIcon(icons.Rank_without_taxi, lat, lon, "Rank name : " + name + " ~~~~~~~  Number of taxis : 0");
+			console.log("Added rank", name, "to map");
+		}
+		
+		function ranksTaxi(id, name, lat, lon, taxi_no, first_taxi_id, first_taxi_soc) {
+			this.id = id;
+			this.name = name;
+			this.num = taxi_no;
+			this.marker = markerIcon(icons.Rank_without_taxi, lat, lon, "Rank name : " + name + " ~~~~~~~  Number of taxis : " + taxi_no + " ~~~~~~~ First taxi ID (SOC): " + first_taxi_id + "(" + first_taxi_soc + ")");
+			console.log("Added rank", name, "to map");
+		}
+
 		////////////////////////////////////////////////////////////////
 		// Taxis
 		
@@ -397,25 +431,6 @@
 			for (id in taxis) {
 				map.removeLayer(taxis[id].destLine)
 			}
-		}
-		
-
-		////////////////////////////////////////////////////////////////
-		// Ranks
-		
-		var Ranks = {}
-		
-		function addRank(num, name, lon, lat) {
-			if (name in Ranks) {
-				throw new Error("Cannot add Ranks with name " + name + " as it exists already")
-			}
-			Rank[name] = new ranks(num, name, lat, lon);
-		}
-		
-		function ranks(num, name, lat, lon) {
-			this.name = name;
-			this.marker = markerIcon(icons.Rank, lat, lon, "Rank name : " + name + " ~~~~~~~  Number of taxis : " + num);
-			console.log("Added rank", name, "to map");
 		}
 		
 

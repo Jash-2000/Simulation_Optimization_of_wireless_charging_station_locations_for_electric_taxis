@@ -39,7 +39,8 @@ function main(stop::Float64=Inf, ans::String="NO" )
          
       in_service(sim,status, shifts)
       @process dispatcher(sim, net, trips, data, status, log, shifts)
-
+      
+      # try-catch-finally takes 10% more time in execution.
       #= 
       if (sim == true)
           # Run the simulation till "stop" time has been reached.
@@ -51,8 +52,7 @@ function main(stop::Float64=Inf, ans::String="NO" )
          print("\n There is some kind of error \n")
     
       end
-      =# # try-catch-finally takes 10% more time in execution.
-   
+      =# 
       try
          # Run the simulation till "stop" time has been reached.
          @time run(sim, stop)  # @time macro is used to calculate and print the execution time.
@@ -77,4 +77,4 @@ function main(stop::Float64=Inf, ans::String="NO" )
 end
 
 S, L = main(TIME, ans)
-print("\n Type ' print(S) ' to see the final values of Status and type ' print(L)' to see the final values of Log")
+print("\n In the next line, type ' print(S) ' to see the final values of Status and type ' print(L)' to see the final values of Log")

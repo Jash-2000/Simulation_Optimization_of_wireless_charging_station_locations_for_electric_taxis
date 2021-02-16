@@ -5,10 +5,10 @@ If called, this script runs the main simulation function.
 ---
 
 Issues to be sorted 
-	* Increasing the Animation_Speed does not necessarily increase the simulation speed. It just starts
-	communicating at a lower sampling rate.
+	* Increasing/Decreasing the Animation_Speed does not increase/Decrease the simulation speed. It just starts
+	communicating at a lowers/increases the sampling rate.
 
-	* The calls remain visible until the entire duration of the trip.
+	* The calls remain visible until the entire duration of the trip i.e. even after the axi picks up the passensger.
 """
 using CSV
 using DataFrames
@@ -179,8 +179,13 @@ function animAddranks!(client::Client, data::Data, net::Network)
 		messageDict["rank_long"] = long
 		messageDict["rank_name"] = data.rank_name[rank_id]
 		messageDict["rank_taxi"] = data.rank_init_taxi[rank_id]
-		messageDict["rank_first_taxi"] = status.rank_status.queue[rank][1]
-		messageDict["rank_first_soc"] = status.rank_status.queue_taxi_soc[rank][1]
+		if data.rank_init_taxi[rank_id] > 0
+			messageDict["rank_first_taxi"] = status.rank_status.queue[rank][1]
+			messageDict["rank_first_soc"] = status.rank_status.queue_taxi_soc[rank][1]
+		else
+			messageDict["rank_first_taxi"] = 0
+			messageDict["rank_first_soc"] = -100
+		end
 		print("\n Done sending rank : ", data.rank_name[rank_id])
 		write(client, json(messageDict))
 	end
@@ -246,7 +251,7 @@ function animateClient(client::Client, data::Data, net::Network,  trips::Vector{
 	
 	# Set up the simulation process.
 	@process dispatcher(sim, net, trips, data, status, log, shifts, animSpeed)
-
+	
 	# Set up the start time.
 	messageDict_time = createMessageDict("set_start_time")
 	messageDict_time["time"] = now(sim)
@@ -274,7 +279,10 @@ function animateClient(client::Client, data::Data, net::Network,  trips::Vector{
 			timmer(client, sim)
 			run(sim, stop)
 			writeClient!(client, messageDict, "got_last_frame")
-
+		
+		elseif msgType == "wait_for_start"
+			set_up_complete(client)
+		
 		elseif msgType == "disconnect"
 			close(client)
 			println("Client disconnected")
@@ -297,8 +305,13 @@ function updateFrame(animation_speed::Int64, active_trips::Vector{Trip})
 	messageDict_ranks = createMessageDict("update_ranks")
 	for  rank in size(status.rank_status.queue)[1]
 		messageDict["rank_taxi"] = sizeof(status.rank_status.queue[rank])[1]
-		messageDict["rank_first_taxi"] = status.rank_status.queue[rank][1]
-		messageDict["rank_first_soc"] = status.rank_status.queue_taxi_soc[rank][1]
+		if  sizeof(status.rank_status.queue[rank])[1] > 0
+			messageDict["rank_first_taxi"] = status.rank_status.queue[rank][1]
+			messageDict["rank_first_soc"] = status.rank_status.queue_taxi_soc[rank][1]
+		else
+			messageDict["rank_first_taxi"] = 0
+			messageDict["rank_first_soc"] = -100
+		end
 		write(client, json(messageDict_ranks))
 	end
 
@@ -336,6 +349,11 @@ function updateFrame(animation_speed::Int64, active_trips::Vector{Trip})
 
 		elseif msgType == "pause"
 			continue
+
+		elseif msgType == "stop"
+			animation_speed = 0						# To bypass the animation loop in TaxiSim
+			close(client)
+			break
 		
 		else
 			error("Unrecognised message: ", msgString)
