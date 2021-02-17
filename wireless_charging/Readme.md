@@ -9,7 +9,7 @@ Other instructions given below hold true for all versions (uptil the tested vers
 
 **It is important to note that Julia REPL saves all the variables and constants that are defined/used during a session. Hence, every time you run the code, you have to open a new REPL terminal.**  
 
-We have 2 main files : 1 for Simulation and 2 for Animation. To run them( for example you want to run the simulation file) type in the following:
+This project has 2 major components i.e. simulation and animation. Both these components can be executed by running the main.jl file with the following commands:
 
    1. In linux terminal:
         $ julia main_simulation.jl
@@ -17,11 +17,14 @@ We have 2 main files : 1 for Simulation and 2 for Animation. To run them( for ex
    2. In julia terminal (REPL):
         julia> include("main.jl")
 
-   3. In code editors supporting Julia Plugins ( VS Code or JUNO-Atom):
+   3. In code editors supporting Julia Plugins (VS Code or JUNO-Atom):
        * File -> Open Folder -> evrouting
        * Comment the " path " script in main.jl
        * Open Julia terminal inside the editor. View the [Official documentation](https://www.julia-vscode.org/)for more help. 
        * Use julia main.jl or include("main.jl")
+
+
+After a few moments, a Julia prompt will ask you whether you wish to see the animation or not. If you are interested in viewing just the simulation, type **"NO" or "no" or "N"**. But, in case you wish to see the animation as well, follow the additional instuctions provided in [animation.md](https://bitbucket.org/araith/evrouting/src/master/wireless_charging/animation.md).
 
 ---
 
