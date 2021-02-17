@@ -1,17 +1,8 @@
-"""
-This is the main file that uses a 3-way communication between Simulation, Javascript client and itself. 
-If called, this script runs the main simulation function. 
+#This is the main file that uses a 3-way communication between Simulation, Javascript client and itself. 
+#If called, this script runs the main simulation function. 
 
----
-
-Issues to be sorted 
-	* Increasing/Decreasing the Animation_Speed does not increase/Decrease the simulation speed. It just starts
-	communicating at a lowers/increases the sampling rate.
-
-	* The calls remain visible until the entire duration of the trip i.e. even after the axi picks up the passensger.
-"""
-using CSV
 using DataFrames
+using CSV
 using Dates
 using JLD2
 using FileIO
@@ -363,3 +354,8 @@ function updateFrame(animation_speed::Int64, active_trips::Vector{Trip})
 
 	return animation_speed
 end
+
+
+# Issues to be sorted : 
+# 1) Increasing/Decreasing the Animation_Speed does not increase/Decrease the simulation speed. It just starts communicating at a lowers/increases the sampling rate.
+# 2) The calls remain visible until the entire duration of the trip i.e. even after the axi picks up the passensger.
