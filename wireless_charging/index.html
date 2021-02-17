@@ -145,7 +145,7 @@
 		
 				// Show the static ranks on the map, with the initial condition.	
 				case "add_ranks":
-					addRank(msgOjb.rank_id, msgObj.rank_name, msgObj.rank_long, msgObj.rank_lat, msgObj.rank_taxi, msgObj.rank_first_taxi, msgObj.rank_first_soc)
+					addRank(msgObj.rank_id, msgObj.rank_name, msgObj.rank_long, msgObj.rank_lat, msgObj.rank_taxi, msgObj.rank_first_taxi, msgObj.rank_first_soc)
 					break;
 
 				// Show the static taxi object on the map. They are initially at the ranks themselves.	
@@ -170,29 +170,38 @@
                 
 				// Show the calls of currently active trips.
 				case "update_calls":
+					delete_calls()
+					update_calls(msgObj.active_id, msgObj.calls_to_show_lat, msgObj.calls_to_show_long)
+					connection.send("Calls_updated");
+					break;
 					
+				case "ready_for_next_frame":
 					if (state == "running"){	
 						connection.send("prepare_next_frame");
+					}
+					else{
+						console.log("Error over here!!!!!!!!!!!!")
 					}
 					break;
 
 				// Update the Rank dynamics	
 				case "update_ranks":
-					
+					delete_ranks()
+					addRank(msgObj.rank_id, msgObj.rank_name, msgObj.rank_long, msgObj.rank_lat, msgObj.rank_taxi, msgObj.rank_first_taxi, msgObj.rank_first_soc)
+					connection.send("Ranks_updated");
 					break;
 
 				// Update the taxi locations and draw lines for their trips.	
 				case "update_taxis":
-					
+					delete_taxis()
+					update_taxis(msgObj.taxi_ID, msgObj.taxi_start_lat, msgObj.taxi_start_long, msgObj.taxi_end_lat, msgObj.taxi_end_long)
+					connection.send("Taxis_updated");
 					break;
 				
 				// Notification call for the Javascript client to disconnect from Julia server.
 				case "got_last_frame":
-					if (doLogState) {
-						console.log("finished sim")
-					}
-					pauseAnimation()
-					nextSimTime = simTime;
+					console.log("Finished Sim, Closing the Animation")
+					state = "paused"
 					break;
 				
 				// Deafult error message.
@@ -200,7 +209,8 @@
 					throw new Error("Undefined message type")
 			}
 		}
-		
+
+		console.log("Finished the switch case and closing the window")
 		// window closing
 		window.onbeforeunload = function() {
 			console.log("disconnecting");
@@ -220,7 +230,7 @@
 			}
 		})
 
-		var state = "stopped"; 					// can be: running, paused, stopped
+		var state = "paused"; 	// can be: running, paused, stopped
 		$('#run_pause_button').on('click', function(){
 			if (this.value == "Run" && state == "paused") {
 				state = "running";
@@ -247,9 +257,7 @@
 		
 		function stopAnimation() {
 			state = "stopped"
-			removeAll();
 			connection.send("stop");
-			document.getElementById("run_pause_button").value = "Run";
 		}
 		
 		////////////////////////////////////////////////////////////////
@@ -316,8 +324,8 @@
 			for (id in ranks) {
 				ranks[id].marker.setIcon(icons.Rank_without_taxi);
 			}
-			for (id in calls) {
-				calls[id].marker.setIcon(icons.passenger);
+			for (id in activeCalls) {
+				activeCalls[id].marker.setIcon(icons.passenger);
 			}
 			for (id in taxis){
 				taxis[id].marker.setIcon(icons.taxi);
@@ -327,8 +335,8 @@
 		////////////////////////////////////////////////////////////////
 		// Ranks
 		
-		var ranks = {}
-		var taxi_ranks = {}
+		var ranks = {};
+		var taxi_ranks = {};
 					
 		function addRank(id, name, lon, lat, taxi_no, first_taxi_id, first_taxi_soc) 
 		{
@@ -336,66 +344,111 @@
 				if (id in ranks) {
 					throw new Error("Cannot add Ranks with name " + ranks[id].name + " as it exists already")
 				}
-				ranks[id] = new ranks(id, name, lat, lon);
+				ranks[id] = new Ranks(id, name, lat, lon);
 			
 			}else if (taxi_no > 0){
 				if (id in taxi_ranks) {
-					throw new Error("Cannot add Ranks with name " + ranks[id].name + " as it exists already")
+					throw new Error("Cannot add Ranks with name " + taxi_ranks[id].name + " as it exists already")
 				}
 				taxi_ranks[id] = new ranksTaxi(id, name, lat, lon, taxi_no, first_taxi_id, first_taxi_soc);
 			}
 		}
 		
-		function ranks(id, name, lat, lon) {
+		function Ranks(id, name, lat, lon) {
 			this.id = id;
 			this.name = name;
 			this.marker = markerIcon(icons.Rank_without_taxi, lat, lon, "Rank name : " + name + " ~~~~~~~  Number of taxis : 0");
 			console.log("Added rank", name, "to map");
 		}
+		// L.marker([lat, lon],{icon: icon}).addTo(map).bindPopup(popup);
 		
 		function ranksTaxi(id, name, lat, lon, taxi_no, first_taxi_id, first_taxi_soc) {
 			this.id = id;
 			this.name = name;
 			this.num = taxi_no;
-			this.marker = markerIcon(icons.Rank_without_taxi, lat, lon, "Rank name : " + name + " ~~~~~~~  Number of taxis : " + taxi_no + " ~~~~~~~ First taxi ID (SOC): " + first_taxi_id + "(" + first_taxi_soc + ")");
+			this.marker = markerIcon(icons.Rank_with_taxi, lat, lon, "Rank name : " + name + " ~~~~~~~  Number of taxis : " + taxi_no + " ~~~~~~~ First taxi ID (SOC): " + first_taxi_id + "(" + first_taxi_soc + ")");
 			console.log("Added rank", name, "to map");
+		}
+
+		function delete_ranks(){
+			for (id in ranks){
+				map.removeLayer(ranks[id].marker)
+			}
+			ranks = {};
+			for (id in taxi_ranks){
+				map.removeLayer(taxi_ranks[id].marker)
+			} 
+			taxi_ranks = {};
 		}
 
 		////////////////////////////////////////////////////////////////
 		// Taxis
+
+		var tlat;
+		var tlong;
+		var taxis = {};
 		
-		var taxis = {}
-		
-		function addTaxi(id, lon, lat) {
+		function update_taxis(id, slat, slong, elat, elong) {
 			if (id in taxis) {
 				throw new Error("Cannot add Ranks with name " + id + " as it exists already")
 			}
-			taxis[id] = new taxi(id, lat, lon);
-			addTaxiDest(id, lat, lon);
+			if (slat != elat && slong != elong){
+				tlat = (slat + elat)/2;
+				tlong = (slong + elong)/2;
+				taxis[id] = new taxi(id, tlat, tlong);
+				//addTaxiLines(id, slat, slong, elat, elong);
+			}
+			
 		}
 		
 		function taxi(id, lat, lon) {
 			this.id = id;
-			this.marker = markerIcon(icons.taxi, lat, lon, "Rank name : " + id + "   Number of taxis : " + num);
+			this.marker = markerIcon(icons.taxi, lat, lon, "Taxi ID : " + id );
 			console.log("Added taxi", id, "to map");
 		}
 		
-		function moveTaxi(id, lat, lon) {
-			var t = taxis[id]
-			t.marker.setLatLng([lat, lon])
-		}
+//		function moveTaxi(id, lat, lon) {
+//			var t = taxis[id]
+//			t.marker.setLatLng([lat, lon])
+//		}
 		
-		function removeTaxi() {
+		function delete_taxis() {
 			for (id in taxis) {
 				map.removeLayer(taxis[id].marker)
 			}
-			hideAmbDests()
+			//hideAmbDests()
 			taxis = {}
 		}
 		
+		function addTaxiLines(id, slat, slong, elat, elong){
+
+		}
+		//////////////////////////////////////////////////////////////////////////////
+		// Calls
+
+		var activeCalls = {}
+
+		function delete_calls(){
+			for (id in activeCalls){
+				map.removeLayer(activeCalls[id].marker)
+			}
+			activeCalls = {};
+		}
+
+		function update_calls(id, lat, long){
+			if (id in activeCalls) {
+				throw new Error("Cannot add Ranks with name " + id + " as it exists already")
+			}
+			activeCalls[id] = new ActiveCalls(id, lat, long);
+		}
+
+		function ActiveCalls(id, lat, lon) {
+			this.id = id;
+			this.marker = markerIcon(icons.passenger, lat, lon, "Passenger call at : (" + lat + "," +lon + ")");
+		}
+
 		////////////////////////////////////////////////////////////////
 		// ambulance destinations
-		
 		// todo: ignore for now? Modify if you want to have lines drawn between vehicles and their destinations.
 		
 		function addTaxiDest(id) {

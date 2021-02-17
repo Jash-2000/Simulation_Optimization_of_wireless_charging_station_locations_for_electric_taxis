@@ -23,7 +23,7 @@ route3 - The route between the node where the passeneger dropped off and the des
 rID - Final(Destination) Rank ID
 urgent - Additional feature (not added yet)
 """
-mutable struct Trip 
+mutable struct Trip
     #tripID::Int64
     wait::Float64
     time::Float64

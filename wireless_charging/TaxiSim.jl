@@ -506,7 +506,7 @@ end
 
 @resumable function dispatcher(sim::Simulation, net::Network, trips::Vector{Trip}, data::Data, status::Status, log::Log, shifts::Array{Bool}, animSpeed::Int64 = 0)
     taxis = [@process taxi(sim, net, data, status, log, tID) for tID in 1:data.num_taxis]
-
+    
     # initialise taxis starting with wireless charging (get them to idle with chargers)
     @yield timeout(sim,0.0)
     @yield timeout(sim,0.0)
@@ -517,7 +517,7 @@ end
     node_rank = Dict{Int64,Int64}(data.rank_node[rID] => rID for rID in 1:data.num_ranks)
     rIDc = [rID for rID in 1:data.num_ranks if !isnothing(data.rank_mode[rID])]
     rIDc_node = data.rank_node[rIDc]
-
+    
     active_trips = Trip[]
     tripIDX = 1
     animation_speed = animSpeed
@@ -714,20 +714,10 @@ end
         
         update_rank_status(status)
         push!(log.rank_status_trace, deepcopy(status.rank_status))
-        @yield timeout(sim, 1.0) # Waits for the next timestep to occur. 
-
-        """
-            Adding the functionality for the simulation to get completed with or without animation intervening in the process.
-            Also, added the animation speed control functionality.
-        """
-		if ((animation_speed > 0) && (now(sim) % animation_speed == 0))
-            msg = updateFrame(animation_speed, active_trips)
-            animation_speed = tryparse(Float64, msg)
-        end
-			
     end
     # While ends here.
 end
+
 
 function update_queue(rID::Int64, tID::Int64, status::Status)
     # This function will move an electric taxi (tID) directly infront of the first combustion taxi

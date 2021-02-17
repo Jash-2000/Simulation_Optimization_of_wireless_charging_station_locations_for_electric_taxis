@@ -6,13 +6,14 @@
 # cd("/Users/Jash Shah/Desktop/NZ_Project/evrouting_main/evrouting/wireless_charging")
 
 include("parameters.jl")
-include("TaxiSim.jl")
 include("animation.jl")
+include("TaxiSim.jl")
 
 print("Process has successfully started now!!!!!! \n")
 print("Do you wish to see the animation as well ?? : ")
-ans = readline()
-  
+#ans = readline()
+ans = "Y"                     # Just while testing animation script.
+
 """
       This is the main function of the simulation. It declares and initiates the main simulation environment,
       network structures and other log files to be used for visualization purposes. 
