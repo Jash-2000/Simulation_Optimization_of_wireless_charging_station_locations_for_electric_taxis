@@ -24,7 +24,7 @@ This project has 2 major components i.e. simulation and animation. Both these co
        * Use julia main.jl or include("main.jl")
 
 
-After a few moments, a Julia prompt will ask you whether you wish to see the animation or not. If you are interested in viewing just the simulation, type **"NO" or "no" or "N"**. But, in case you wish to see the animation as well, follow the additional instuctions provided in [animation.md](https://bitbucket.org/araith/evrouting/src/master/wireless_charging/animation.md).
+After a few moments, a Julia prompt will ask you whether you wish to see the animation or not. If you are interested in viewing just the simulation, type **"NO" or "no" or "N"**. But, in case you wish to see the animation as well, follow the additional instuctions provided in [Animation_Readme.md](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Animation_Readme.md).
 
 ---
 
