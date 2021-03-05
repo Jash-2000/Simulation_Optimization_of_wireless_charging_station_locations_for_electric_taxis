@@ -28,10 +28,11 @@ We have an existing simulation model of (electric) taxi movements in a German ci
 ![Animation](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Images/Loader.gif)
 
 
-**And finally, the full animation video would look like this : **
+**And finally, the full animation video would look like this : ** 
+  
+  https://user-images.githubusercontent.com/47540320/110109352-4f7b8a80-7dd3-11eb-8b31-fb0394fc59a8.mp4
 
-![Animation](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Images/Taxis.mp4)
-
+  If the above file doesnt work, download the mp4 file from [here](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Images/Taxis.mp4)
 
 **The corresponding section contains the actual Readme.md for our project but, you won't be able to exetute the project with the provided commands.**
 
