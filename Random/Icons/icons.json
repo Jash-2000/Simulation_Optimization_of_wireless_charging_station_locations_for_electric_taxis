@@ -1,0 +1,44 @@
+{
+	"taxi": {
+		"options": {
+			"iconSize":[19,15],
+			"iconAnchor":[8,7],
+			"popupAnchor":[2,-4]
+		}
+	},
+	"taxi_passenger": {
+		"options": {
+			"iconSize":[19,15],
+			"iconAnchor":[8,7],
+			"popupAnchor":[2,-4]
+		}
+	},
+	"passenger": {
+		"options": {
+			"iconSize":[8,8],
+			"iconAnchor":[5,5],
+			"popupAnchor":[-1,-2]
+		}
+	},
+	"passenger_end": {
+		"options": {
+			"iconSize":[8,8],
+			"iconAnchor":[5,5],
+			"popupAnchor":[-1,-2]
+		}
+	},
+	"Rank_without_taxi": {
+		"options": {
+			"iconSize":[23,23],
+			"iconAnchor":[10,14],
+			"popupAnchor":[2,-11]
+		}
+	},
+	"Rank_with_taxi": {
+		"options": {
+			"iconSize":[23,23],
+			"iconAnchor":[10,14],
+			"popupAnchor":[2,-11]
+		}
+	}
+}
