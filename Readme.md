@@ -4,6 +4,16 @@ This project was part of my winter research internship at the **[University of A
 
 Exact details about the project and the script files are **confidential** and hence, this repository contains just the literature review files and the final result of the animation. This extended Readme also contains the main Readme file of the project. [Animation_Readme](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Animation_Readme.md) also contains visual aid for the steps to run the project.
 
+
+### **Tech Stack** 
+   * [Mapbox-GL-js](https://www.mapbox.com/) APIs for implementing GIS( Geographic Information System ).
+   * Javascript-JQuery (and HTML-CSS) for Front-end connection with the Julia Server.
+   * [SimJulia](https://simjuliajl.readthedocs.io/en/stable/welcome.html) for implementing DES( Discrete Event Simulation ) in Julia.
+   * [Gurobi](https://www.gurobi.com/) optimizer for solving Heuristic and Linear Programming paradigms.
+   * Python wrapper of [OSM( Open Street Maps )](https://wiki.openstreetmap.org/wiki/Osmapi) for building the network and getting Geo-Spatial information.
+   * Julia based Client with dynamic web-socket, enabling JSON based communication.
+
+
 ## [Aim of the project](https://www.auckland.ac.nz/en/study/scholarships-and-awards/scholarship-types/undergraduate-scholarships/summer-research-scholarships/summer-research-projects/engineering/engineering-science.html)
 
 Electric passenger cars together with clean electricity generation lead to decreasing environmental impacts on urban societies. While battery prices are still high, it is most profitable to first electrify those cars that provide a high annual inner-city mileage. Each replacement of a conventional car leads to high emission reductions and – due to lower variable costs of electrical compared to conventional vehicles – also leads to overall cost savings. Hence, taxi fleets, with an average daily mileage of 200 inner-city kilometres, are an attractive target group.
@@ -11,14 +21,6 @@ Electric passenger cars together with clean electricity generation lead to decre
 There are two possible charging systems for electric taxis (e-taxis), conventional fast charging stations and inductive wireless charging systems at taxi ranks. Fast charging stations have the disadvantage that the queueing at the taxi rank, especially in mixed fleets, is challenging as the e-taxi cannot move during the charging process. Inductive systems can be installed below the whole queuing space of the taxi rank and allow the usual queueing process even in mixed taxi fleets. A drawback is, however, a limited charging rate and a lower charging efficiency.
 
 We have an existing simulation model of (electric) taxi movements in a German city. We will extend this simulation to ensure it realistically captures e-taxi operations. We will then develop a simulation-optimisation approach to identify the optimal locations for charging stations within this simulated city. This allows us to identify best value-for-money distributions of chargers and also to investigate questions such as what type of chargers and charging rates are required at different locations. As part of this project we can also add visualisation capability to the simulation.
-
-
-**Tech Stack** 
-   * Mapbox-GL-js APIs for implementing GIS.
-   * Javascript (and HTML-CSS) for Frontend connection with the Julia Client.
-   * SimJulia for implementing DES in Julia
-   * Gurobi optimizer for solving LPPs
-   * Julia based Client with dynamic web-socket, enabling JSON based communication.
 
 
 ## Animation output
