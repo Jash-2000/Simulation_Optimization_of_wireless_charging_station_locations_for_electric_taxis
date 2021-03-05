@@ -23,9 +23,21 @@ We have an existing simulation model of (electric) taxi movements in a German ci
 
 ## Animation output
 
+ **The loader will load like this**
 
-![Animation_gif]()
+<figure class="video_container">
+  <video controls="true" allowfullscreen="false" poster="path/to/poster_image.png">
+    <source src="https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Images/Loader.mp4" type="video/mp4">
+  </video>
+</figure>
 
+**And finally, the main animation would look like this : **
+
+<figure class="Video_container">
+  <video controls="true" allowfullscreen="true">
+    <source src="https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Images/Taxis.mp4" type="video/mp4">
+  </video>
+</figure>
 
 
 **The corresponding section contains the actual Readme.md for our project but, you won't be able to exetute the project with the provided commands.**
