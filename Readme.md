@@ -20,8 +20,18 @@ Electric passenger cars together with clean electricity generation lead to decre
 
 There are two possible charging systems for electric taxis (e-taxis), conventional fast charging stations and inductive wireless charging systems at taxi ranks. Fast charging stations have the disadvantage that the queueing at the taxi rank, especially in mixed fleets, is challenging as the e-taxi cannot move during the charging process. Inductive systems can be installed below the whole queuing space of the taxi rank and allow the usual queueing process even in mixed taxi fleets. A drawback is, however, a limited charging rate and a lower charging efficiency.
 
-The fast charging method may be very beneficial if applied in a cost-optimized way. The following figure shows the statistical proof of electric vehicle battery charging. 
-![Charging Speeds](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Random/SOC.png "Charging Modes") ![SOC curve](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Random/Open-circuit-voltage-OCV-state-of-charge-SOC-curve-at-room-temperature.png "SOC vs Open Voltage curve")
+The fast charging method may be very beneficial if applied in a cost-optimized way. The following figure shows the statistical proof of electric vehicle battery charging.
+
+<table>
+  <tr>
+    <td>Charging Speeds</td>
+    <td>SOC curve</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Random/SOC.png"></td>
+    <td valign="top"><img src="https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Random/Open-circuit-voltage-OCV-state-of-charge-SOC-curve-at-room-temperature.png"></td>
+  </tr>
+ </table>
 
 We have developed an simulation model of (electric) taxi movements in a German city, to ensure it realistically captures e-taxi operations. We have also developd a simulation-optimisation approach to identify the optimal locations for charging stations within this simulated city. This allows us to identify best value-for-money distributions of chargers and also to investigate questions such as what type of chargers and charging rates are required at different locations. As part of this project we can also add visualisation capability to the simulation.
 
