@@ -1,6 +1,6 @@
 # Wireless Charger Simulation
 
-This project was part of my winter research internship at the **[University of Auckland](https://www.auckland.ac.nz/en.html)** from November 2020 to March 2021, under supervision of **[Dr. Andrea Raith](https://unidirectory.auckland.ac.nz/profile/a-raith)**, Senior Lecturer in the Department of Engineering Science. 
+This project was part of my winter research internship at the **[University of Auckland](https://www.auckland.ac.nz/en.html)** from November 2020 to March 2021, under supervision of **[Dr. Andrea Raith](https://unidirectory.auckland.ac.nz/profile/a-raith)**, Senior Lecturer in the Department of Engineering Science. The project team also included various other PhD and Undergraduate students and I was honoured to be working along them.   
 
 Exact details about the project and the script files are **confidential** and hence, this repository contains just the literature review files and the final result of the animation. This extended Readme also contains the main Readme file of the project. [Animation_Readme](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Animation_Readme.md) also contains visual aid for the steps to run the project.
 
@@ -20,7 +20,10 @@ Electric passenger cars together with clean electricity generation lead to decre
 
 There are two possible charging systems for electric taxis (e-taxis), conventional fast charging stations and inductive wireless charging systems at taxi ranks. Fast charging stations have the disadvantage that the queueing at the taxi rank, especially in mixed fleets, is challenging as the e-taxi cannot move during the charging process. Inductive systems can be installed below the whole queuing space of the taxi rank and allow the usual queueing process even in mixed taxi fleets. A drawback is, however, a limited charging rate and a lower charging efficiency.
 
-We have an existing simulation model of (electric) taxi movements in a German city. We will extend this simulation to ensure it realistically captures e-taxi operations. We will then develop a simulation-optimisation approach to identify the optimal locations for charging stations within this simulated city. This allows us to identify best value-for-money distributions of chargers and also to investigate questions such as what type of chargers and charging rates are required at different locations. As part of this project we can also add visualisation capability to the simulation.
+The fast charging method may be very beneficial if applied in a cost-optimized way. The following figure shows the statistical proof of electric vehicle battery charging. 
+![Charging Speeds](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Random/SOC.png "Charging Modes") ![SOC curve](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Random/Open-circuit-voltage-OCV-state-of-charge-SOC-curve-at-room-temperature.png "SOC vs Open Voltage curve")
+
+We have developed an simulation model of (electric) taxi movements in a German city, to ensure it realistically captures e-taxi operations. We have also developd a simulation-optimisation approach to identify the optimal locations for charging stations within this simulated city. This allows us to identify best value-for-money distributions of chargers and also to investigate questions such as what type of chargers and charging rates are required at different locations. As part of this project we can also add visualisation capability to the simulation.
 
 
 ## Animation output
@@ -30,7 +33,7 @@ We have an existing simulation model of (electric) taxi movements in a German ci
 ![Animation](https://github.com/Jash-2000/Simulation_Optimization_of_wireless_charging_station_locations_for_electric_taxis/blob/main/Images/Loader.gif)
 
 
-**And finally, the full animation video would look like this : ** 
+**And finally, the full animation video would look like this** : 
   
   https://user-images.githubusercontent.com/47540320/110109352-4f7b8a80-7dd3-11eb-8b31-fb0394fc59a8.mp4
 
